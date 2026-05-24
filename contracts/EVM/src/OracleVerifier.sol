@@ -8,7 +8,7 @@ import "./interfaces/IOracleVerifier.sol";
 
 /**
  * @title OracleVerifier
- * @author NFTxLend Team
+ * @author ryzen-xp
  * @notice Verifies oracle-signed price attestations for NFT collateral valuation.
  * @dev Risk Parameters (from arch.md):
  *        Max LTV:                40%
@@ -46,10 +46,11 @@ contract OracleVerifier is IOracleVerifier, Ownable {
     /**
      * @notice Verify an oracle-signed price attestation.
      */
-    function verifyAttestation(
-        PriceAttestation calldata attestation,
-        bytes calldata signature
-    ) external override returns (bool) {
+    function verifyAttestation(PriceAttestation calldata attestation, bytes calldata signature)
+        external
+        override
+        returns (bool)
+    {
         // Add implementation here
     }
 
@@ -74,20 +75,19 @@ contract OracleVerifier is IOracleVerifier, Ownable {
     /**
      * @notice Get the latest verified attestation for an NFT.
      */
-    function getLatestAttestation(
-        address nftContract,
-        uint256 tokenId
-    ) external view override returns (PriceAttestation memory) {
+    function getLatestAttestation(address nftContract, uint256 tokenId)
+        external
+        view
+        override
+        returns (PriceAttestation memory)
+    {
         // Add implementation here
     }
 
     /**
      * @notice Check if an attestation is still valid (not expired).
      */
-    function isAttestationValid(
-        address nftContract,
-        uint256 tokenId
-    ) external view override returns (bool) {
+    function isAttestationValid(address nftContract, uint256 tokenId) external view override returns (bool) {
         // Add implementation here
     }
 

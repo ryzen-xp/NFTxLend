@@ -10,7 +10,7 @@ import "./interfaces/INFTVault.sol";
 
 /**
  * @title NFTVault
- * @author NFTxLend Team
+ * @author ryzen-xp
  * @notice Core vault contract for locking NFT collateral.
  * @dev Users deposit ERC-721 NFTs here. The backend oracle listens for
  *      `NFTDeposited` events, fetches floor prices, calculates collateral
@@ -20,7 +20,6 @@ import "./interfaces/INFTVault.sol";
  *      to allow the user to withdraw their NFT.
  */
 contract NFTVault is INFTVault, IERC721Receiver, Ownable, ReentrancyGuard, Pausable {
-
     uint256 private _nextPositionId;
     address public relayer;
 
@@ -37,6 +36,7 @@ contract NFTVault is INFTVault, IERC721Receiver, Ownable, ReentrancyGuard, Pausa
     error InvalidNFTContract();
     error InvalidStellarAddress();
     error NotAuthorizedRelayer();
+    error InvalidLockDuration();
 
     modifier onlyRelayer() {
         if (msg.sender != relayer) revert NotAuthorizedRelayer();
@@ -55,13 +55,36 @@ contract NFTVault is INFTVault, IERC721Receiver, Ownable, ReentrancyGuard, Pausa
     /**
      * @notice Deposit an NFT into the vault to create a collateral position.
      */
-    function depositNFT(
-        address nftContract,
-        uint256 tokenId,
-        bytes32 stellarAddress,
-        uint256 lockDuration
-    ) external override nonReentrant whenNotPaused returns (uint256 positionId) {
-        // Add implementation here
+    function depositNFT(address nftContract, uint256 tokenId, bytes32 stellarAddress, uint256 lockDuration)
+        external
+        override
+        nonReentrant
+        whenNotPaused
+        returns (uint256 positionId)
+    {
+        if (nftContract == address(0)) revert InvalidNFTContract();
+        if (lockDuration == 0) revert InvalidLockDuration();
+
+        Position memory _position = Position({
+            owner: msg.sender, // address() wrapper not needed
+            nftContract: nftContract,
+            tokenId: tokenId,
+            stellarAddress: stellarAddress,
+            active: true,
+            lockedAt: block.timestamp,
+            expiresAt: block.timestamp + lockDuration
+        });
+
+        _nextPositionId += 1;
+        _positions[_nextPositionId] = _position;
+
+        IERC721(nftContract).safeTransferFrom(msg.sender, address(this), tokenId);
+
+        emit INFTVault.NFTDeposited(
+            _nextPositionId, msg.sender, nftContract, tokenId, block.timestamp, block.timestamp + lockDuration
+        );
+
+        return _nextPositionId;
     }
 
     /**

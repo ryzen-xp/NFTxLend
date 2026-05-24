@@ -10,7 +10,12 @@ import "@openzeppelin/token/ERC721/ERC721.sol";
 contract MockNFTR is ERC721 {
     uint256 private _id;
     constructor() ERC721("M", "M") {}
-    function mint(address to) external returns (uint256) { uint256 i = _id++; _mint(to, i); return i; }
+
+    function mint(address to) external returns (uint256) {
+        uint256 i = _id++;
+        _mint(to, i);
+        return i;
+    }
 }
 
 contract NFTxLendRouterTest is Test {

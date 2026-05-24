@@ -9,12 +9,11 @@ import "./interfaces/IOracleVerifier.sol";
 
 /**
  * @title NFTxLendRouter
- * @author NFTxLend Team
+ * @author ryzen-xp
  * @notice Main entry-point that orchestrates NFT deposits with oracle verification.
  * @dev Ties NFTVault + OracleVerifier together with collection whitelisting.
  */
 contract NFTxLendRouter is Ownable, ReentrancyGuard, Pausable {
-
     INFTVault public vault;
     IOracleVerifier public oracleVerifier;
 
@@ -64,12 +63,12 @@ contract NFTxLendRouter is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Simple deposit without attestation (attestation verified later by backend).
      */
-    function depositNFT(
-        address nftContract,
-        uint256 tokenId,
-        bytes32 stellarAddress,
-        uint256 lockDuration
-    ) external nonReentrant whenNotPaused returns (uint256 positionId) {
+    function depositNFT(address nftContract, uint256 tokenId, bytes32 stellarAddress, uint256 lockDuration)
+        external
+        nonReentrant
+        whenNotPaused
+        returns (uint256 positionId)
+    {
         // Add implementation here
     }
 
@@ -87,10 +86,7 @@ contract NFTxLendRouter is Ownable, ReentrancyGuard, Pausable {
     /**
      * @notice Batch whitelist multiple collections.
      */
-    function batchSetCollectionSupport(
-        address[] calldata collections,
-        bool[] calldata supported
-    ) external onlyOwner {
+    function batchSetCollectionSupport(address[] calldata collections, bool[] calldata supported) external onlyOwner {
         // Add implementation here
     }
 

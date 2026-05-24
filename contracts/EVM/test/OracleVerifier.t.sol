@@ -19,15 +19,30 @@ contract OracleVerifierTest is Test {
 
     function _makeAtt(uint256 tid) internal view returns (IOracleVerifier.PriceAttestation memory) {
         return IOracleVerifier.PriceAttestation({
-            nftContract: nftAddr, tokenId: tid,
-            floorPriceWei: 5 ether, ethUsdPrice: 250000000000,
-            collateralValue: 625000000000, maxBorrowAmount: 500000000000,
-            timestamp: block.timestamp, expiresAt: block.timestamp + 5 minutes
+            nftContract: nftAddr,
+            tokenId: tid,
+            floorPriceWei: 5 ether,
+            ethUsdPrice: 250000000000,
+            collateralValue: 625000000000,
+            maxBorrowAmount: 500000000000,
+            timestamp: block.timestamp,
+            expiresAt: block.timestamp + 5 minutes
         });
     }
 
     function _signAtt(IOracleVerifier.PriceAttestation memory a) internal view returns (bytes memory) {
-        bytes32 h = keccak256(abi.encode(a.nftContract, a.tokenId, a.floorPriceWei, a.ethUsdPrice, a.collateralValue, a.maxBorrowAmount, a.timestamp, a.expiresAt));
+        bytes32 h = keccak256(
+            abi.encode(
+                a.nftContract,
+                a.tokenId,
+                a.floorPriceWei,
+                a.ethUsdPrice,
+                a.collateralValue,
+                a.maxBorrowAmount,
+                a.timestamp,
+                a.expiresAt
+            )
+        );
         bytes32 eh = MessageHashUtils.toEthSignedMessageHash(h);
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(oraclePrivateKey, eh);
         return abi.encodePacked(r, s, v);
@@ -40,7 +55,18 @@ contract OracleVerifierTest is Test {
 
     function test_verify_invalidSig() public {
         IOracleVerifier.PriceAttestation memory a = _makeAtt(1);
-        bytes32 h = keccak256(abi.encode(a.nftContract, a.tokenId, a.floorPriceWei, a.ethUsdPrice, a.collateralValue, a.maxBorrowAmount, a.timestamp, a.expiresAt));
+        bytes32 h = keccak256(
+            abi.encode(
+                a.nftContract,
+                a.tokenId,
+                a.floorPriceWei,
+                a.ethUsdPrice,
+                a.collateralValue,
+                a.maxBorrowAmount,
+                a.timestamp,
+                a.expiresAt
+            )
+        );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(0xBAD, MessageHashUtils.toEthSignedMessageHash(h));
         vm.expectRevert(OracleVerifier.InvalidSignature.selector);
         verifier.verifyAttestation(a, abi.encodePacked(r, s, v));

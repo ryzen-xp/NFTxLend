@@ -15,13 +15,13 @@ interface INFTVault {
 
     /// @notice Represents a single NFT collateral position
     struct Position {
-        address owner;           // Wallet that deposited the NFT
-        address nftContract;     // ERC-721 collection address
-        uint256 tokenId;         // Token ID within the collection
-        bytes32 stellarAddress;  // Borrower's Stellar address (raw 32-byte public key)
-        bool active;             // Whether the position is still locked
-        uint64 lockedAt;         // Timestamp when NFT was deposited
-        uint64 expiresAt;        // Expiry timestamp (0 = no expiry)
+        address owner; // Wallet that deposited the NFT
+        address nftContract; // ERC-721 collection address
+        uint256 tokenId; // Token ID within the collection
+        bytes32 stellarAddress; // Borrower's Stellar address (raw 32-byte public key)
+        bool active; // Whether the position is still locked
+        uint64 lockedAt; // Timestamp when NFT was deposited
+        uint64 expiresAt; // Expiry timestamp (0 = no expiry)
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -40,12 +40,7 @@ interface INFTVault {
     );
 
     /// @notice Emitted when an NFT is released back to the owner
-    event NFTWithdrawn(
-        uint256 indexed positionId,
-        address indexed owner,
-        address indexed nftContract,
-        uint256 tokenId
-    );
+    event NFTWithdrawn(uint256 indexed positionId, address indexed owner, address indexed nftContract, uint256 tokenId);
 
     /// @notice Emitted when the backend oracle marks a position as repayment-eligible
     event PositionUnlocked(uint256 indexed positionId);
@@ -60,12 +55,9 @@ interface INFTVault {
     /// @param stellarAddress Borrower's Stellar public key (32 bytes)
     /// @param lockDuration Duration in seconds to lock the NFT (0 = indefinite)
     /// @return positionId The ID of the newly created position
-    function depositNFT(
-        address nftContract,
-        uint256 tokenId,
-        bytes32 stellarAddress,
-        uint256 lockDuration
-    ) external returns (uint256 positionId);
+    function depositNFT(address nftContract, uint256 tokenId, bytes32 stellarAddress, uint256 lockDuration)
+        external
+        returns (uint256 positionId);
 
     /// @notice Withdraw an NFT after the loan has been repaid and position unlocked
     /// @param positionId The ID of the position to withdraw from
